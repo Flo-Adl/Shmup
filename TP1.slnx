@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="Shmup/Shmup.vcxproj" Id="1477c85e-30f8-4b75-b4eb-b1738b67e3db" />
+</Solution>
