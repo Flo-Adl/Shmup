@@ -4,19 +4,17 @@
 class bullet
 {
 public:
-    bullet(float x, float y, float speed, float size, Color color);
+    bullet(float x, float y, Vector2 vel, float size, Color color);
 
     void Update(float dt);
     void Draw() const;
-
     bool IsOffScreen() const;
-    Vector2 GetPosition() const;
+
     Rectangle GetRect() const;
 
 private:
     Vector2 _pos;
-    float _speed;
+    Vector2 _vel;
     float _size;
     Color _color;
 };
-

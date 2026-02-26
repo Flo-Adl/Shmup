@@ -34,6 +34,9 @@ int main()
     float reloadTimer = 0.0f;
     bool isReloading = false;
 
+    int tripleShots = 0;
+    int nextTripleAt = 15;
+
     while (!WindowShouldClose())
     {
         float dt = GetFrameTime();
@@ -107,20 +110,50 @@ int main()
             }
         }
 
+        if (score >= nextTripleAt)
+        {
+            tripleShots += 3;
+            nextTripleAt += 15;
+        }
+
         // --- TIR ---
         if (!isReloading && IsKeyPressed(KEY_SPACE))
         {
             if (currentAmmo > 0)
             {
                 Vector2 pos = player.GetPosition();
-                bullets.emplace_back(pos.x, pos.y - 20, 400.0f, 6.0f, PURPLE);
-                currentAmmo--;
-            }
+                float speed = 400.0f;
 
-            if (currentAmmo == 0)
-            {
-                isReloading = true;
-                reloadTimer = reloadTime;
+                bool wantTriple = (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT));
+
+                // --- SUPER ---
+                if (wantTriple && tripleShots > 0)
+                {
+                    float a = 30.0f * DEG2RAD;
+
+                    Vector2 v0 = { 0.0f, -speed };
+                    Vector2 vL = { -speed * sinf(a), -speed * cosf(a) };
+                    Vector2 vR = { speed * sinf(a), -speed * cosf(a) };
+
+                    bullets.emplace_back(pos.x, pos.y - 20, v0, 6.0f, DARKPURPLE);
+                    bullets.emplace_back(pos.x, pos.y - 20, vL, 6.0f, DARKPURPLE);
+                    bullets.emplace_back(pos.x, pos.y - 20, vR, 6.0f, DARKPURPLE);
+
+                    tripleShots--;
+                    currentAmmo--;
+                }
+                else
+                {
+                    bullets.emplace_back(pos.x, pos.y - 20, Vector2{ 0.0f, -speed }, 6.0f, DARKPURPLE);
+                    currentAmmo--;
+                }
+
+                // Si plus de munitions : reload
+                if (currentAmmo == 0)
+                {
+                    isReloading = true;
+                    reloadTimer = reloadTime;
+                }
             }
         }
 
@@ -226,7 +259,8 @@ int main()
                 score = 0;
                 currentAmmo = maxAmmo;
                 spawnTimer = 0.0f;
-
+                tripleShots = 0;
+                nextTripleAt = 15;
                player.Reset(300,600);
 
             }
@@ -269,16 +303,17 @@ int main()
             e.Draw();
 
         //DrawText("Shmup - Prototype", 10, 10, 20, LIGHTGRAY);
-        DrawText(TextFormat("Score: %d", score), 10, 20, 20, LIGHTGRAY);
-        DrawText(TextFormat("Lives: %d", player.GetLives()), 10, 50, 20, LIGHTGRAY);
+        DrawText(TextFormat("Score : %d", score), 10, 20, 20, LIGHTGRAY);
+        DrawText(TextFormat("Lives : %d", player.GetLives()), 10, 50, 20, LIGHTGRAY);
+        
+        DrawText(TextFormat("Ammo : %d / %d", currentAmmo, maxAmmo),10, 710, 20, LIGHTGRAY);
+        DrawText(TextFormat("Super (SHIFT + SPACE) : %d", tripleShots), 10, 740, 20, LIGHTGRAY);
 
-        DrawText(TextFormat("Ammo: %d / %d", currentAmmo, maxAmmo),
-            10, 730, 20, LIGHTGRAY);
         if (isReloading)
         {
-            DrawText("RELOADING...", 10, 760, 20, RED);
+            DrawText("RELOADING...", 10, 770, 20, RED);
         }
-
+        
         EndDrawing();
     }
 
