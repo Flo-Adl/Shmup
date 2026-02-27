@@ -21,6 +21,7 @@ int main()
     float spawnInterval = 1.0f; // 1 ennemi / seconde
 
     int score = 0;
+    int hightscore = 0;
 
     // --- MENU ---
     bool inMenu = true;
@@ -77,7 +78,6 @@ int main()
             DrawRectangleRec(quit, hover2 ? GRAY : DARKGRAY);
             DrawRectangleLinesEx(quit, 2, RAYWHITE);
             DrawText("QUIT", (int)quit.x + 85, (int)quit.y + 15, 30, RAYWHITE);
-
 
             EndDrawing();
             continue;
@@ -173,7 +173,6 @@ int main()
         if (spawnTimer >= spawnInterval)
         {
             spawnTimer = 0.0f;
-
             float x = (float)GetRandomValue(20, GetScreenWidth() - 20);
             float y = -20.0f;
             enemies.emplace_back(x, y, 120.0f, 0.25f);
@@ -252,6 +251,7 @@ int main()
             Vector2 mouse = GetMousePosition();
             bool hover = CheckCollisionPointRec(mouse, playBtn);
             bool hover2 = CheckCollisionPointRec(mouse, quit);
+            if (score > hightscore) hightscore = score;
 
             if (hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
                 bullets.clear();
@@ -272,15 +272,17 @@ int main()
             Rectangle playBtn2 = { 600 / 2.0f - 120, 800 / 2.0f - 30, 240, 60 };
             BeginDrawing();
             ClearBackground(BLACK);
-            DrawText("GAME OVER", 151, 151, 50, RED);
-            DrawText("GAME OVER", 149, 149, 50, RED);
-            DrawText("GAME OVER", 150, 150, 50, RED);
+            DrawText("GAME OVER", 155, 155, 50, DARKPURPLE);
+            DrawText("GAME OVER", 145, 145, 50, DARKPURPLE);
+            DrawText("GAME OVER", 150, 150, 50, PURPLE);
             
+            DrawText(TextFormat("Final Score : %d", score), 205, 230, 25, RAYWHITE);
+            DrawText(TextFormat("High Score  : %d", hightscore), 205, 260, 25, RAYWHITE);
+             
             DrawRectangleRec(playBtn2, hover ? GRAY : DARKGRAY);
             DrawRectangleLinesEx(playBtn2, 2, RAYWHITE);
             DrawText("RESTART", (int)playBtn2.x + 45, (int)playBtn2.y + 15, 30, RAYWHITE);
 
-            
             DrawRectangleRec(quit, hover2 ? GRAY : DARKGRAY);
             DrawRectangleLinesEx(quit, 2, RAYWHITE);
             DrawText("QUIT", (int)quit.x + 85, (int)quit.y + 15, 30, RAYWHITE);
@@ -311,7 +313,7 @@ int main()
 
         if (isReloading)
         {
-            DrawText("RELOADING...", 10, 770, 20, RED);
+            DrawText("RELOADING...", 10, 770, 20, PURPLE);
         }
         
         EndDrawing();
